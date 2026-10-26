@@ -32,8 +32,11 @@ def main():
             n = 5 # исходные данные к задаче
 
     matr = [[0.0 for j in range(n+1)] for i in range(n)]
-    x = [0.0 for y in range(n)]
-    st = ['' for u in range(n)]
+    l = [[0.0 for j in range(n)] for i in range(n)]
+    u = [[0.0 for j in range(n)] for i in range(n)]
+    x = [0.0 for q in range(n)]
+    y = [0.0 for p in range(n)]
+    st = ['' for i in range(n)]
 
     #--------------------------------------------------------
     if (w == 1):
@@ -105,23 +108,19 @@ def main():
     #--------------------------------------------------------
     print("--------------------------------------------------------------------------------")
     print("Исходная матрица: \n")
-    # вывод матрицы после к итерации
     for r in range(n):
         for e in range(n+1):
             print(format(matr[r][e], "10.4f"), end = "  ")
         print()
         
+    x = lu(n, matr, l, u, y, x)
+    
     if (w == 0):
-        print("\n--------------------------------------------------------------------------------")
-        print("Метод LU-разложения: ")
-        print("--------------------------------------------------------------------------------", end = '')
-        x = lu(n, matr, x)
-        
         # вывод решений к задаче
         print("\n--------------------------------------------------------------------------------")
         print("Решения СЛАУ, полученные методом LU-разложения: \n")
-        for l in range(n):
-            print(f"x{l} = {x[l]:.4f}")
+        for k in range(n):
+            print(f"x{k} = {x[k]:.4f}")
     #--------------------------------------------------------
     if (w == 1):
         print("\n--------------------------------------------------------------------------------")
@@ -134,7 +133,6 @@ def main():
         print("Решения СЛАУ: \n")
         for h in range(n):
             print(format(x[h], "10.4f"))
-        print()
 #--------------------------------------------------------
 def pars(s, var_names):
     """Разбирает выражение без знака '=' и возвращает словарь коэффициентов и свободный член."""
@@ -184,7 +182,75 @@ def equation(line, var_names):
     const = kr - kl
     return coeffs, const
 #--------------------------------------------------------
-def lu(n, matr, x):
+def lu(n, matr, l, u, y, x):
+    #первичное заполнение массивов l и u
+    for i in range(n):
+        for j in range(n):
+            l[i][j] = 0
+            if (i == j):
+                u[i][j] = 1
+            else:
+                u[i][j] = 0
+    
+    #слой 0
+    for i in range(n):
+        l[i][0] = matr[i][0]
+    for j in range(1, n):
+        u[0][j] = matr[0][j] / l[0][0]
+
+    #пересчёт остальных слоёв
+    for k in range(1, n):
+        
+        #пересчёт l(i, k)
+        for i in range(k, n):
+            l[i][k] = matr[i][k]
+            for m in range(k):
+                l[i][k] = l[i][k] - l[i][m] * u[m][k]
+
+        #пересчёт u(k, j)
+        if (k < n-1):
+            for j in range(k+1, n):
+                u[k][j] = matr[k][j]
+                for m in range(k):
+                    u[k][j] = u[k][j] - l[k][m] * u[m][j]
+                u[k][j] = u[k][j] / l[k][k]
+
+    #вывод матриц l и u
+    print("\n--------------------------------------------------------------------------------")
+    print("Матрица L: \n")
+    for i in range(n):
+        for j in range(n):
+            print(format(l[i][j], "10.4f"), end = "  ")
+        print()
+
+    print("\n--------------------------------------------------------------------------------")
+    print("Матрица U: \n")
+    for i in range(n):
+        for j in range(n):
+            print(format(u[i][j], "10.4f"), end = "  ")
+        print()
+
+    #ычисление y
+    y[0] = matr[0][n] / l[0][0]
+    for k in range(1, n):
+        y[k] = matr[k][n]
+        for m in range(k):
+            y[k] = y[k] - l[k][m] * y[m]
+        y[k] = y[k] / l[k][k]
+
+    #вывод y
+    print("\n--------------------------------------------------------------------------------")
+    print("Вектор Y: \n")
+    for k in range(n):
+        print(format(y[k], "10.4f"), end = "  ")
+    print()
+
+    #вычисление x
+    x[n-1] = y[n-1]
+    for k in range(n-2, -1, -1):
+        x[k] = y[k]
+        for m in range(k+1, n):
+            x[k] = x[k] - u[k][m] * x[m]
     
     return x
 #--------------------------------------------------------
