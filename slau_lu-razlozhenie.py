@@ -108,9 +108,12 @@ def main():
     #--------------------------------------------------------
     print("--------------------------------------------------------------------------------")
     print("Исходная матрица: \n")
-    for r in range(n):
-        for e in range(n+1):
-            print(format(matr[r][e], "10.4f"), end = "  ")
+    for t in range(n):
+        for e in range(n):
+            print(format(matr[t][e], "10.4f"), end = "  ")
+        print(end = "|")
+        for d in range(n, n+1):
+            print(format(matr[t][d], "10.4f"), end = "")
         print()
         
     x = lu(n, matr, l, u, y, x)
