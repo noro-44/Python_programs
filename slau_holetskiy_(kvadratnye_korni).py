@@ -108,11 +108,20 @@ def main():
     #--------------------------------------------------------
     print("--------------------------------------------------------------------------------")
     print("Исходная матрица: \n")
-    for r in range(n):
-        for e in range(n+1):
-            print(format(matr[r][e], "10.4f"), end = "  ")
+    for t in range(n):
+        for e in range(n):
+            print(format(matr[t][e], "10.4f"), end = "  ")
+        print(end = "|")
+        for d in range(n, n+1):
+            print(format(matr[t][d], "10.4f"), end = "")
         print()
         
+    #проверка матрицы на симметричность и положительную определённость
+    if (not spo(n, matr)):
+        print("\n--------------------------------------------------------------------------------")
+        print("Матрица не является симметричной положительно определённой")
+        return
+
     x = holetskiy(n, matr, l, u, y, x)
     
     if (w == 0):
@@ -244,6 +253,54 @@ def holetskiy(n, matr, l, u, y, x):
         x[i] = x[i] / u[i][i]
     
     return x
+#--------------------------------------------------------
+def opredelitel(n, matr):
+    d = 1.0
+    m = [[0.0 for j in range(n+1)] for i in range(n)]
+    
+    for u in range(n):
+        for z in range(n):
+            m[u][z] = matr[u][z]
+            
+    for k in range(n):
+        p = max(range(k, n), key = lambda i :abs(m[i][k]))
+        if (abs(m[p][k]) <= 1e-13):
+            return 0.0
+        if (p != k):
+            m[k], m[p] = m[p], m[k]
+            d = -d
+        d *= m[k][k]
+        for i in range(k+1, n):
+            f = m[i][k] / m[k][k]
+            for j in range(k, n):
+                m[i][j] -= f * m[k][j]
+    return d
+#--------------------------------------------------------
+def spo(n, matr):
+    simm = 0 #симметричность
+    pol_opr = 0 #положительная определённость
+
+    #проверка на симметричность
+    for i in range(n):
+        for j in range(n):
+            if (matr[i][j] == matr[j][i]):
+                simm = 1
+            else:
+                simm = 0
+
+    #проверка на положительную определённость
+    for k in range(1, n+1):
+        minor = [[matr[i][j] for j in range(k)] for i in range(k)]
+        if (opredelitel(k, minor) <= 1e-13):
+            pol_opr = 0
+        else:
+            pol_opr = 1
+
+    
+    if ((simm == 1) and (pol_opr == 1)):
+        return 1
+    else:
+        return 0
 #--------------------------------------------------------
 if (__name__ == "__main__"):
     main()
