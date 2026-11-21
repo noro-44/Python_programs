@@ -105,10 +105,12 @@ def main():
     #--------------------------------------------------------
     print("--------------------------------------------------------------------------------")
     print("Исходная матрица: \n")
-    # вывод матрицы после к итерации
-    for r in range(n):
-        for e in range(n+1):
-            print(format(matr[r][e], "10.4f"), end = "  ")
+    for t in range(n):
+        for e in range(n):
+            print(format(matr[t][e], "10.4f"), end = "  ")
+        print(end = "|")
+        for d in range(n, n+1):
+            print(format(matr[t][d], "10.4f"), end = "")
         print()
         
     if (w == 0):
@@ -233,8 +235,11 @@ def gauss(n, matr, x):
         # вывод матрицы после каждой итерации
         print(f"\nПосле итерации k = {k + 1}: \n")
         for p in range(n):
-            for q in range(n+1):
-                print(format(matr[p][q], "10.4f"), end = "  ")
+            for q in range(n):
+                print(format(matr[p][q], "10.4f"), end = "  ")   
+            print(end = "|")
+            for d in range(n, n+1):
+                print(format(matr[p][d], "10.4f"), end = "")
             print()
         
     # вычисление х
@@ -273,8 +278,11 @@ def jordan_gauss(n, matr, x):
         # вывод матрицы после каждой итерации
         print(f"\nПосле итерации k = {k + 1}: \n")
         for p in range(n):
-            for q in range(n+1):
-                print(format(matr[p][q], "10.4f"), end = "  ")
+            for q in range(n):
+                print(format(matr[p][q], "10.4f"), end = "  ")   
+            print(end = "|")
+            for d in range(n, n+1):
+                print(format(matr[p][d], "10.4f"), end = "")
             print()
         
     # вычисление х
